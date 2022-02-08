@@ -1,5 +1,7 @@
 # The Killchain - An Adversarial Malware Design Walkthrough
 
+![All Your Bytes Are Belong To Us](reverse_shell.png)
+
 # Requirements
 
 - Windows 10 the assumption being that this walkthrough was developed using Windows 10 and Window's Subsytem for Linux - Debian for the purposes of compiling our malware.
@@ -131,8 +133,8 @@ hexdump -v -e '1/1 "0x%02x,"' reverse_shell.bin | sed 's/.$//' > reverse_shell.t
 
 The shellcode byte array will be written into the reverse_shell.txt file. You could paste the shellcode in this file directly into your .NET application and your payload should fire when the application starts.
 To try to make this a more advanced exploit we will develop the .NET application in such a way that it will load our shellcode into memory at runtime, that way it will be slightly harder for someone to reverse engineer your malware.
-As you can see that it is very simple to modularize your payloads by following the above process. 
-Also consider that this shellcode has not been obfuscated at all, and at least for now we don't need to since Nim binaries are as of not usually flagged by antivirus solutions...for now.  
+You can see that it is very simple to modularize your payloads by following the above process. 
+Also consider that this shellcode has not been obfuscated at all, for the time being, we don't need to since Nim binaries are not usually flagged by antivirus solutions.  
 The shellcode format generated in our reverse_shell.txt file is also usable in other languages such as Go. 
 The final thing I would like to point out is that we have a great opportunity here to utilize some devops practices, this entire workflow is perfect for a CI/CD pipeline.
 
