@@ -374,6 +374,30 @@ Please note that I have not included the entire base64 string in the above examp
 As you can see we have taken our Dropper.ps1 script and obfuscated it as a string, we will then unpack it at runtime and execute it.
 The final step in our killchain is simply to generate a malicious file that will retrieve and execute our Stealth.ps1 script in memory.
 
+# Step 4: Deliver our malicious file
+
+For us to craft the final piece of malware we need to initiate our killchain let us quickly inventory what we might need.  
+We know that we will need to deliver a file that can execute code on the target, and for that reason we should use either a Microsoft Word or Excel document.  
+With Office documents you can embed code directly within the document commonly referred to as "macros", these macros are typically written in Visual Basic.  
+We could use a tool such as [DotNetToJScript](https://github.com/tyranid/DotNetToJScript) to convert the .NET application that we wrote into a macro we embed into an Office document for us however there are limitations to this approach.  
+The first limitation is that DotNetToJscript may not work with the version of the .NET Framework we are targeting, this consideration is very important, perhaps if you were already using an older version of the .NET Framework it wouldn't be an issue, however we are using the .NET Framework 6 at the time of writing.  
+To use that tool you will need to have the targeting packs for older versions of the .NET Framework to even be able to compile the tool in order to use it.  
+You then would need to design your .NET application to be compatible with the tool, and this could lock you into using specific versions of your toolchain.  
+Being locked in like this allows endpoint detection systems to build analytics over time.
+Of course we want as much flexibility as possible and to make things extensible so we can swap out things in our toolchain as needed.
+For that reason we are going to automate the creation of our poisoned Office document so that we have a custom tool that can generate it for us at any time.
+The options we have to do this are of course C# using the .NET Framework, Python using various libraries, and many other programming languages that can interface with .NET and Window's Component Object Model ([COM](https://docs.microsoft.com/en-us/windows/win32/com/component-object-model--com--portal)).
+In this example I'm going to use Nim again to automate the creation of a posioned Excel file, lets take a look at poisoned_excel.nim:
+
+```
+import winim/com
+import strformat
+import os
+```
+
+Here you can see our imports, the import of most note is the "winim/com" library.
+Winim is a lightweight library in Nim that exposes many primitives across the Windows API for easy usage in Nim.
+
 # Resources
 - https://github.com/byt3bl33d3r/OffensiveNim - Excellent Proof Of Concept scripts for Nim based malware
 - https://inv.riverside.rocks/watch?v=gH9qyHVc9-M - Excellent explanation of several techniques for executing Shellcode using Go
