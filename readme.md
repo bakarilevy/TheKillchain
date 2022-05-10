@@ -180,8 +180,7 @@ EXCELntDonut -f Program.cs
 After the build completes, you should see an output of a posisoned excel file that you can now deploy to your target.
 I would recommend that you take time to pretty up the Excel Document prior to deploying it in the field so that you can get a higher interaction success rate.
 
-Here you can see our imports, the import of most note is the "winim/com" library.
-Winim is a lightweight library in Nim that exposes many primitives across the Windows API for easy usage in Nim.
+With this I would highly encourage you to experiment with each of the tools in this toolchain, whether that is the Trojan (It's Santana), The Loader (SharpLoader), or Phishing tool (EXCELntDonut)
 
 # Resources
 - https://github.com/byt3bl33d3r/OffensiveNim - Excellent Proof Of Concept scripts for Nim based malware
@@ -189,7 +188,6 @@ Winim is a lightweight library in Nim that exposes many primitives across the Wi
 - https://pentestlaboratories.com/2021/05/17/amsi-bypass-methods/ - An excellent explanation of how AMSI works and common bypasses
 - https://github.com/stephenfewer/ReflectiveDLLInjection - Author of the Reflective DLL Injection technique
 - https://www.pinvoke.net/index.aspx - Handy reference of .NET P/Invoke function signatures
-- https://github.com/r3nhat/XORedReflectiveDLL - Template of our Injection.cs class, slightly modified for our use cases
 - https://github.com/bakarilevy/SharpLoader - General Purpose .NET Loader
 - https://github.com/bakarilevy/Santana - General Purpose Remote Access Trojan
 - https://github.com/FortyNorthSecurity/EXCELntDonut - Macro Document Generator
